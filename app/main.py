@@ -1,53 +1,68 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
+from datetime import date
+from datetime import time
 
 app = FastAPI()
 
 
-class Orden(BaseModel):
+class Incidente(BaseModel):
     id: int
-    producto: str
-    cantidad: float
-    tipo: str
-    precio: float
-    total: float
+    Fecha_Ingreso: date
+    Hora_Registro: time
+    Registrado_Por: str
+    Número_Contacto: int
+    Descripción_Error: str
+    Estado: str
+    Fecha_resolución: date
 
 
-# Lista vacía para almacenar los artículos creados.
-ordenes = []
+# Lista vacía para almacenar los incidentes creados.
+Incidentes = []
 
 # Ruta para la página de inicio que devuelve un mensaje de bienvenida.
+
+
 @app.get('/')
 def bienvenida():
-    return {'mensaje': 'Welcome a mi aplicación FastAPI Utpl 2028'}
+    return {'mensaje': 'Welcome a mi aplicación FastAPI Gestión de Incidentes Utpl 2024'}
 
-# Ruta para obtener todos los artículos almacenados en la lista.
-# El parámetro "response_model" especifica que la respuesta será una lista de objetos "Orden".
-@app.get("/ordenes", response_model=List[Orden])
-async def leer_ordenes():
-    return ordenes
+# Ruta para obtener todos los Incidentes almacenados en la lista.
+# El parámetro "response_model" especifica que la respuesta será una lista de objetos "Incidente".
 
-# Ruta para crear un nuevo artículo.
-# El parámetro "response_model" especifica que la respuesta será un objeto "Orden".
+
+@app.get("/Incidentes", response_model=List[Incidente])
+async def leer_Incidentes():
+    return Incidentes
+
+# Ruta para crear un nuevo Incidente.
+# El parámetro "response_model" especifica que la respuesta será un objeto "Incidente".
 # ES
-@app.post("/ordenes", response_model=Orden)
-async def crear_orden(orden: Orden):
-    ordenes.append(orden)  # Agrega el artículo a la lista.
 
-    return orden
 
-# Ruta para actualizar una orden existente por su ID.
-# El parámetro "response_model" especifica que la respuesta será un objeto "Orden".
-@app.put("/ordenes/{orden_id}", response_model=Orden)
-async def actualizar_orden(orden_id: int, orden: Orden):
-    ordenes[orden_id] = orden  # Actualiza la orden en la lista.
-    return orden
+@app.post("/Incidentes", response_model=Incidente)
+async def crear_Incidente(Incidente: Incidente):
+    Incidentes.append(Incidente)  # Agrega el incidente a la lista.
 
-# Ruta para eliminar una orden por su ID.
+    return Incidente
+
+# Ruta para actualizar un Incidente existente por su ID.
+# El parámetro "response_model" especifica que la respuesta será un objeto "Incidente".
+
+
+@app.put("/Incidentes/{Incidente_id}", response_model=Incidente)
+async def actualizar_Incidente(Incidente_id: int, Incidente: Incidente):
+    Incidentes[Incidente_id] = Incidente  # Actualiza el incidente en la lista.
+    return Incidente
+
+# Ruta para eliminar un Incidente por su ID.
 # No se especifica "response_model" ya que no se devuelve ningún objeto en la respuesta.
-# Este metodo elimina una orden por su ID.
-@app.delete("/ordenes/{orden_id}")
-async def eliminar_orden(orden_id: int):
-    del ordenes[orden_id]  # Elimina el item de la lista.
-    return {"mensaje": "Orden eliminada"}  # Devuelve un mensaje informativo.
+# Este metodo elimina un incidente por su ID.
+
+
+@app.delete("/Incidentes/{Incidente_id}")
+async def eliminar_incidente(Incidente_id: int):
+    del Incidentes[Incidente_id]  # Elimina el Incidente de la lista.
+    # Devuelve un mensaje informativo.
+    return {"mensaje": "Incidente eliminada"}
