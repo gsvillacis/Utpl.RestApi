@@ -15,7 +15,15 @@ class Incidente(BaseModel):
     Número_Contacto: int
     Descripción_Error: str
     Estado: str
+
+
+class Resolución(BaseModel):
+    id: int
     Fecha_resolución: date
+    Hora_resolución: time
+    Resuelto_Por: str
+    Descripción_Resolución: str
+    Estado: str
 
 
 # Lista vacía para almacenar los incidentes creados.
@@ -66,3 +74,12 @@ async def eliminar_incidente(Incidente_id: int):
     del Incidentes[Incidente_id]  # Elimina el Incidente de la lista.
     # Devuelve un mensaje informativo.
     return {"mensaje": "Incidente eliminada"}
+
+# Ruta para resolver un Incidente por su ID.
+# El parámetro "response_model" especifica que la respuesta será un objeto "incidente".
+
+
+@app.put("/Incidentes/{Incidente_id}", response_model=Incidente)
+async def resolver_Incidente(Incidente_id: int, Incidente: Incidente):
+    Incidentes[Incidente_id] = Incidente  # Resuleve el incidente.
+    return Incidente
