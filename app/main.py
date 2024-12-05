@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 from datetime import date
@@ -8,17 +8,19 @@ app = FastAPI()
 
 
 class Incidente(BaseModel):
-    id: int
+
     Fecha_Ingreso: date
     Hora_Registro: time
     Registrado_Por: str
     Número_Contacto: int
     Descripción_Error: str
     Estado: str
+    Prioridad: str
+    Resolución: str = None
 
 
 class Resolución(BaseModel):
-    id: int
+
     Fecha_resolución: date
     Hora_resolución: time
     Resuelto_Por: str
@@ -34,7 +36,7 @@ Incidentes = []
 
 @app.get('/')
 def bienvenida():
-    return {'mensaje': 'Welcome a mi aplicación FastAPI Gestión de Incidentes Utpl 2024'}
+    return {'mensaje': 'Welcome a mi aplicación FastAPI Gestión de Incidentes Utpl 2024 prueba1'}
 
 # Ruta para obtener todos los Incidentes almacenados en la lista.
 # El parámetro "response_model" especifica que la respuesta será una lista de objetos "Incidente".
@@ -52,7 +54,6 @@ async def consultar_Incidentes():
 @app.post("/Incidentes", response_model=Incidente)
 async def crear_Incidente(Incidente: Incidente):
     Incidentes.append(Incidente)  # Agrega el incidente a la lista.
-
     return Incidente
 
 # Ruta para actualizar un Incidente existente por su ID.
@@ -60,7 +61,9 @@ async def crear_Incidente(Incidente: Incidente):
 
 
 @app.put("/Incidentes/{Incidente_id}", response_model=Incidente)
-async def actualizar_Incidente(Incidente_id: int, Incidente: Incidente):
+async def actualizar_Incidente(Incidente_id, Incidente: Incidente):
+    if Incidente_id >= len(Incidentes):
+        raise HTTPException(status_code=404, detail="Incidente no encontrado")
     Incidentes[Incidente_id] = Incidente  # Actualiza el incidente en la lista.
     return Incidente
 
@@ -71,15 +74,27 @@ async def actualizar_Incidente(Incidente_id: int, Incidente: Incidente):
 
 @app.delete("/Incidentes/{Incidente_id}")
 async def eliminar_incidente(Incidente_id: int):
-    del Incidentes[Incidente_id]  # Elimina el Incidente de la lista.
-    # Devuelve un mensaje informativo.
-    return {"mensaje": "Incidente eliminada"}
+    if Incidente_id >= len(Incidentes):
+        raise HTTPException(status_code=404, detail="Incidente no encontrado")
+    del Incidentes[Incidente_id]  # Elimina el incidente de la lista.
+    return {"mensaje": "Incidente eliminado"}
 
 # Ruta para resolver un Incidente por su ID.
 # El parámetro "response_model" especifica que la respuesta será un objeto "incidente".
 
 
-@app.put("/Incidentes/{Incidente_id}", response_model=Incidente)
-async def resolver_Incidente(Incidente_id: int, Incidente: Incidente):
-    Incidentes[Incidente_id] = Incidente  # Resuleve el incidente.
-    return Incidente
+@app.put("/Incidentes/{incidente_id}/resolver", response_model=Incidente)
+async def resolver_Incidente(Incidente_id: int, Resolución: Resolución):
+    if Incidente_id >= len(Incidentes):
+        raise HTTPException(status_code=404, detail="Incidente no encontrado")
+
+    # obtener el incidente original
+    Incidente_original = Incidentes[Incidente_id]
+
+    # Actualiza el estado del incidente a "Resuelto".
+    Incidente_original.Estado = "Resuelto"
+
+    # Agrega la resolución al incidente.
+    Incidente_original.Resolución = Resolución
+
+    return Incidente_original
