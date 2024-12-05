@@ -33,7 +33,7 @@ def bienvenida():
 
 
 @app.get("/Incidentes", response_model=List[Incidente])
-async def leer_Incidentes():
+async def consultar_Incidentes():
     return Incidentes
 
 # Ruta para crear un nuevo Incidente.
