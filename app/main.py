@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import date
 from datetime import time
 
@@ -8,7 +8,7 @@ app = FastAPI()
 
 
 class Incidente(BaseModel):
-
+    id: int
     Fecha_Ingreso: date
     Hora_Registro: time
     Registrado_Por: str
@@ -16,7 +16,7 @@ class Incidente(BaseModel):
     Descripción_Error: str
     Estado: str
     Prioridad: str
-    Resolución: str = None
+    Resolución: Optional[str] = None
 
 
 class Resolución(BaseModel):
@@ -95,6 +95,8 @@ async def resolver_Incidente(Incidente_id: int, Resolución: Resolución):
     Incidente_original.Estado = "Resuelto"
 
     # Agrega la resolución al incidente.
-    Incidente_original.Resolución = Resolución
+    Incidente_original.Resolución = f"Resuelto por: {Resolución.Resuelto_Por}, " \
+        f"Fecha: {Resolución.Fecha_resolución}, " \
+        f"Descripción: {Resolución.Descripción_Resolución}"
 
     return Incidente_original
