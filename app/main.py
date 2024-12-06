@@ -8,24 +8,21 @@ app = FastAPI()
 
 
 class Incidente(BaseModel):
-    id: int
+    # Hacer que el ID sea opcional para que no sea requerido en la creación.
+    id: Optional[int] = None
     Fecha_Ingreso: date
-    Hora_Registro: time
     Registrado_Por: str
-    Número_Contacto: int
+    # Cambiar a str para evitar problemas con números de contacto largos.
+    Número_Contacto: str
     Descripción_Error: str
-    Estado: str
-    Prioridad: str
+    Estado: str = "Nuevo"
+    Prioridad: str = "P4"
     Resolución: Optional[str] = None
 
 
-class Resolución(BaseModel):
-
-    Fecha_resolución: date
-    Hora_resolución: time
-    Resuelto_Por: str
-    Descripción_Resolución: str
-    Estado: str
+class IncidenteU(BaseModel):
+    # Hacer que el ID sea opcional para que no sea requerido en la creación.
+    Estado: str = "Nuevo"
 
 
 # Lista vacía para almacenar los incidentes creados.
@@ -36,7 +33,7 @@ Incidentes = []
 
 @app.get('/')
 def bienvenida():
-    return {'mensaje': 'Welcome a mi aplicación FastAPI Gestión de Incidentes Utpl 2024 prueba1'}
+    return {'mensaje': 'Welcome a mi aplicación FastAPI Gestión de Incidentes Utpl 2024 prueba12'}
 
 # Ruta para obtener todos los Incidentes almacenados en la lista.
 # El parámetro "response_model" especifica que la respuesta será una lista de objetos "Incidente".
@@ -52,51 +49,43 @@ async def consultar_Incidentes():
 
 
 @app.post("/Incidentes", response_model=Incidente)
-async def crear_Incidente(Incidente: Incidente):
-    Incidentes.append(Incidente)  # Agrega el incidente a la lista.
-    return Incidente
+async def crear_Incidente(incidente: Incidente):
+    incidente.id = len(Incidentes) + 1  # Asigna un ID único al incidente.
+    Incidentes.append(incidente)  # Agrega el incidente a la lista.
+    return incidente
 
 # Ruta para actualizar un Incidente existente por su ID.
 # El parámetro "response_model" especifica que la respuesta será un objeto "Incidente".
 
 
-@app.put("/Incidentes/{Incidente_id}", response_model=Incidente)
-async def actualizar_Incidente(Incidente_id, Incidente: Incidente):
-    if Incidente_id >= len(Incidentes):
-        raise HTTPException(status_code=404, detail="Incidente no encontrado")
-    Incidentes[Incidente_id] = Incidente  # Actualiza el incidente en la lista.
-    return Incidente
+@app.put("/Incidentes/{incidente_id}", response_model=Incidente)
+async def actualizar_Incidente(incidente_id: int, incidenteU: IncidenteU):
+    for idx, existing_incidente in enumerate(Incidentes):
+        if existing_incidente.id == incidente_id:
+            # Imprime la información registrada
+            print(f"Información registrada: {existing_incidente.dict()}")
+            existing_incidente.Estado = incidenteU.Estado
+            return existing_incidente
+    raise HTTPException(status_code=404, detail="Incidente no encontrado")
 
 # Ruta para eliminar un Incidente por su ID.
 # No se especifica "response_model" ya que no se devuelve ningún objeto en la respuesta.
 # Este metodo elimina un incidente por su ID.
 
 
-@app.delete("/Incidentes/{Incidente_id}")
-async def eliminar_incidente(Incidente_id: int):
-    if Incidente_id >= len(Incidentes):
-        raise HTTPException(status_code=404, detail="Incidente no encontrado")
-    del Incidentes[Incidente_id]  # Elimina el incidente de la lista.
-    return {"mensaje": "Incidente eliminado"}
+@app.delete("/Incidentes/{incidente_id}")
+async def eliminar_incidente(incidente_id: int):
+    for idx, existing_incidente in enumerate(Incidentes):
+        if existing_incidente.id == incidente_id:
+            del Incidentes[idx]  # Elimina el incidente de la lista.
+            return {"mensaje": "Incidente eliminado"}
+    raise HTTPException(status_code=404, detail="Incidente no encontrado")
 
-# Ruta para resolver un Incidente por su ID.
-# El parámetro "response_model" especifica que la respuesta será un objeto "incidente".
+# Ruta para buscar incidentes por su descripción.
 
 
-@app.put("/Incidentes/{incidente_id}/resolver", response_model=Incidente)
-async def resolver_Incidente(Incidente_id: int, Resolución: Resolución):
-    if Incidente_id >= len(Incidentes):
-        raise HTTPException(status_code=404, detail="Incidente no encontrado")
-
-    # obtener el incidente original
-    Incidente_original = Incidentes[Incidente_id]
-
-    # Actualiza el estado del incidente a "Resuelto".
-    Incidente_original.Estado = "Resuelto"
-
-    # Agrega la resolución al incidente.
-    Incidente_original.Resolución = f"Resuelto por: {Resolución.Resuelto_Por}, " \
-        f"Fecha: {Resolución.Fecha_resolución}, " \
-        f"Descripción: {Resolución.Descripción_Resolución}"
-
-    return Incidente_original
+@app.get("/Incidentes/buscar", response_model=List[Incidente])
+async def buscar_Incidentes(descripcion: str):
+    resultados = [incidente for incidente in Incidentes if descripcion.lower(
+    ) in incidente.Descripción_Error.lower()]
+    return resultados
