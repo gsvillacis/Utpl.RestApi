@@ -1,32 +1,40 @@
-workspace "Plataforma de comercio electronico" {
+workspace "Plataforma de gestion de Incidentes" {
 
     !identifiers hierarchical
     
-    description "Una API para gestionar productos"
+    description "Una API para gestionar Incidentes de Banco Pichincha"
     
     model {
-        pCliente = person "Usuario final"
-        pAdministrador = person "Administrador del comercio"
-        sErp = softwareSystem "ERP EMPRESARIAL"
-        ssProductos = softwareSystem "Plataforma de gestión de comercio" {
+        pGestorMonitoreo = person "Gestor de Monitoreo"
+        pGestorIncidente = person "Gestor de Incidente"
+        pAdministradorGI = person "Administrador Gestión de Incidentes"
+        pGrupoResolutor = person "Grupo resolutor"
+        
+        ssIncidentes = softwareSystem "Plataforma de gestión de Incidentes de Banco Pichincha"{
             
-            
-            wepAppGestion = container "Web de gestión" {
-                tags "AppWeb"
-                technology "SPA Angular 16"
-                description "Sitio web para la administración de parámertros del sistema"
+            appMobileIncidentes = container "App movil" {
+                tags "Microsoft Azure - Key Vaults"
+                technology "Flutter"
+                description "Aplicativo movil "
             }
             
-            wepAppCompras = container "Web de compras" {
+            webAppGestionIncidentes = container "Web de gestión de Incidentes" {
                 tags "AppWeb"
                 technology "SPA Angular 16"
-                description "Sitio web para solicitar ordenes"
+                description "Sitio web para la administración de parámetros del sistema"
             }
             
-            apiCompras = container "Api de compras" {
+            webAppIngresoIncidentes = container "Web de Incidentes" {
+                tags "AppWeb"
+                technology "SPA Angular 16"
+                description "Sitio web para Ingresar Incidentes"
+            }
+            
+            apiIncidentes = container "Api de Incidentes" {
                 tags "Api"
                 technology "Python 3"
-                description "API REST para la consulta y envío de información a la base de datos"
+                description "API REST para la consulta y envío de información de incidentes a la base de datos"
+                
                 seguridadComponent = component "Componente de Seguridad" "Provides functionality related to signing in, changing passwords, etc." "Fast Security / Python 3"
                 emailComponent = component "E-mail Component" "Envia notificaciones a los clientes" "Python Email"
                 telegramComponent = component "Telegram Component" "Envia notificaciones a los clientes por telegram" "Python Notified"
@@ -34,31 +42,44 @@ workspace "Plataforma de comercio electronico" {
             
             db = container "Base de datos" {
                 tags "Database"
-                technology "Oracle 20g"
+            }
+
+            monitoringTools = container "Herramientas de Monitoreo" {
+                tags "Monitoring"
+                technology "Various"
+                description "Herramientas que envían alertas a los gestores de monitoreo"
+                
+                monitoringComponent = component "Componente de Monitoreo" "Envía alertas a los gestores de monitoreo" "Python Monitoring"
             }
         }
 
-        pCliente -> ssProductos.wepAppCompras "Interactúa con la app para crear, leer, actualizar y eliminar órdenes"
-        pAdministrador -> ssProductos.wepAppGestion "Configura la API y monitorea su funcionamiento"
-        sErp -> ssProductos.apiCompras "Interactúa con la app para gestion de inventario"
-        
-        ssProductos.apiCompras -> ssProductos.db "Lee y escribe informacion a"
-        ssProductos.wepAppGestion -> ssProductos.apiCompras "Lee / escribe a " "https"
-        ssProductos.wepAppCompras -> ssProductos.apiCompras "Lee / escribe a " "https"
+        pGestorMonitoreo -> ssIncidentes.webAppGestionIncidentes "Interactúa con la app para crear, leer, actualizar y eliminar Incidentes"
+        pGestorMonitoreo -> ssIncidentes.appMobileIncidentes "Interactúa con la app para crear, leer, actualizar y eliminar Incidentes"
+        pGestorMonitoreo -> ssIncidentes.monitoringTools.monitoringComponent "Recibe alertas de"
+        pAdministradorGI -> ssIncidentes.webAppGestionIncidentes "Configura la API y monitorea su funcionamiento"
+        pGestorIncidente -> ssIncidentes.webAppGestionIncidentes "Consulta o actualiza Incidentes"
+	    pGestorIncidente -> ssIncidentes.appMobileIncidentes "Interactúa con la app consultar o actualizar Incidentes"
+	    pGrupoResolutor -> ssIncidentes.webAppGestionIncidentes "Registra acciones de recuperación, fecha de resolución"
+	    pGrupoResolutor -> ssIncidentes.appMobileIncidentes "Interactúa con la app para registra acciones de recuperación, fecha de resolución"
+        ssIncidentes.apiIncidentes -> ssIncidentes.db "Lee y escribe informacion a"
+        ssIncidentes.webAppGestionIncidentes -> ssIncidentes.apiIncidentes "Lee / escribe a " "https"
+        ssIncidentes.webAppIngresoIncidentes -> ssIncidentes.apiIncidentes "Lee / escribe a " "https"
+        ssIncidentes.appMobileIncidentes -> ssIncidentes.apiIncidentes "Lee / escribe a " "https"
+        ssIncidentes.monitoringTools.monitoringComponent -> ssIncidentes.apiIncidentes "Envía alertas a"
     }
 
     views {
-        systemContext ssProductos {
+        systemContext ssIncidentes {
             include *
             autolayout lr
         }
 
-        container ssProductos {
+        container ssIncidentes {
             include *
             autolayout lr
         }
         
-        component ssProductos.apiCompras {
+        component ssIncidentes.apiIncidentes {
             include *
             autolayout lr
         }
@@ -81,8 +102,6 @@ workspace "Plataforma de comercio electronico" {
                 shape cylinder
             }
         }
-        
-        
     }
 
     configuration {
