@@ -1,53 +1,91 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+from datetime import date
+from datetime import time
 
 app = FastAPI()
 
 
-class Orden(BaseModel):
-    id: int
-    producto: str
-    cantidad: float
-    tipo: str
-    precio: float
-    total: float
+class Incidente(BaseModel):
+    # Hacer que el ID sea opcional para que no sea requerido en la creación.
+    id: Optional[int] = None
+    Fecha_Ingreso: date
+    Registrado_Por: str
+    # Cambiar a str para evitar problemas con números de contacto largos.
+    Número_Contacto: str
+    Descripción_Error: str
+    Estado: str = "Nuevo"
+    Prioridad: str = "P4"
+    Resolución: Optional[str] = None
 
 
-# Lista vacía para almacenar los artículos creados.
-ordenes = []
+class IncidenteU(BaseModel):
+    # Hacer que el ID sea opcional para que no sea requerido en la creación.
+    Estado: str = "Nuevo"
+
+
+# Lista vacía para almacenar los incidentes creados.
+Incidentes = []
 
 # Ruta para la página de inicio que devuelve un mensaje de bienvenida.
+
+
 @app.get('/')
 def bienvenida():
-    return {'mensaje': 'Welcome a mi aplicación FastAPI Utpl 2028'}
+    return {'mensaje': 'Welcome a mi aplicación FastAPI Gestión de Incidentes Utpl 2024'}
 
-# Ruta para obtener todos los artículos almacenados en la lista.
-# El parámetro "response_model" especifica que la respuesta será una lista de objetos "Orden".
-@app.get("/ordenes", response_model=List[Orden])
-async def leer_ordenes():
-    return ordenes
+# Ruta para obtener todos los Incidentes almacenados en la lista.
+# El parámetro "response_model" especifica que la respuesta será una lista de objetos "Incidente".
 
-# Ruta para crear un nuevo artículo.
-# El parámetro "response_model" especifica que la respuesta será un objeto "Orden".
+
+@app.get("/Incidentes", response_model=List[Incidente])
+async def consultar_Incidentes():
+    return Incidentes
+
+# Ruta para crear un nuevo Incidente.
+# El parámetro "response_model" especifica que la respuesta será un objeto "Incidente".
 # ES
-@app.post("/ordenes", response_model=Orden)
-async def crear_orden(orden: Orden):
-    ordenes.append(orden)  # Agrega el artículo a la lista.
 
-    return orden
 
-# Ruta para actualizar una orden existente por su ID.
-# El parámetro "response_model" especifica que la respuesta será un objeto "Orden".
-@app.put("/ordenes/{orden_id}", response_model=Orden)
-async def actualizar_orden(orden_id: int, orden: Orden):
-    ordenes[orden_id] = orden  # Actualiza la orden en la lista.
-    return orden
+@app.post("/Incidentes", response_model=Incidente)
+async def crear_Incidente(incidente: Incidente):
+    incidente.id = len(Incidentes) + 1  # Asigna un ID único al incidente.
+    Incidentes.append(incidente)  # Agrega el incidente a la lista.
+    return incidente
 
-# Ruta para eliminar una orden por su ID.
+# Ruta para actualizar un Incidente existente por su ID.
+# El parámetro "response_model" especifica que la respuesta será un objeto "Incidente".
+
+
+@app.put("/Incidentes/{incidente_id}", response_model=Incidente)
+async def actualizar_Incidente(incidente_id: int, incidenteU: IncidenteU):
+    for idx, existing_incidente in enumerate(Incidentes):
+        if existing_incidente.id == incidente_id:
+            # Imprime la información registrada
+            print(f"Información registrada: {existing_incidente.dict()}")
+            existing_incidente.Estado = incidenteU.Estado
+            return existing_incidente
+    raise HTTPException(status_code=404, detail="Incidente no encontrado")
+
+# Ruta para eliminar un Incidente por su ID.
 # No se especifica "response_model" ya que no se devuelve ningún objeto en la respuesta.
-# Este metodo elimina una orden por su ID.
-@app.delete("/ordenes/{orden_id}")
-async def eliminar_orden(orden_id: int):
-    del ordenes[orden_id]  # Elimina el item de la lista.
-    return {"mensaje": "Orden eliminada"}  # Devuelve un mensaje informativo.
+# Este metodo elimina un incidente por su ID.
+
+
+@app.delete("/Incidentes/{incidente_id}")
+async def eliminar_incidente(incidente_id: int):
+    for idx, existing_incidente in enumerate(Incidentes):
+        if existing_incidente.id == incidente_id:
+            del Incidentes[idx]  # Elimina el incidente de la lista.
+            return {"mensaje": "Incidente eliminado"}
+    raise HTTPException(status_code=404, detail="Incidente no encontrado")
+
+# Ruta para buscar incidentes por su descripción.
+
+
+@app.get("/Incidentes/buscar", response_model=List[Incidente])
+async def buscar_Incidentes(descripcion: str):
+    resultados = [incidente for incidente in Incidentes if descripcion.lower(
+    ) in incidente.Descripción_Error.lower()]
+    return resultados
