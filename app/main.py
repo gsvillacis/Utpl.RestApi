@@ -48,6 +48,7 @@ async def consultar_Incidentes(session: Session = Depends(get_session)):
 
 @app.post("/Incidentes", response_model=Incidente)
 async def crear_Incidente(incidente: Incidente, session: Session = Depends(get_session)):
+    incidente.id = len(Incidentes) + 1  # Asigna un ID único al incidente.
     session.add(incidente)  # Agrega el incidente a la lista.
     session.commit()
     session.refresh(incidente)
