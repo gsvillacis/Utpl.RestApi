@@ -7,19 +7,6 @@ from datetime import time
 app = FastAPI()
 
 
-class Incidente(BaseModel):
-    # Hacer que el ID sea opcional para que no sea requerido en la creación.
-    id: Optional[int] = None
-    Fecha_Ingreso: date
-    Registrado_Por: str
-    # Cambiar a str para evitar problemas con números de contacto largos.
-    Número_Contacto: str
-    Descripción_Error: str
-    Estado: str = "Nuevo"
-    Prioridad: str = "P4"
-    Resolución: Optional[str] = None
-
-
 class IncidenteU(BaseModel):
     # Hacer que el ID sea opcional para que no sea requerido en la creación.
     Estado: str = "Nuevo"
