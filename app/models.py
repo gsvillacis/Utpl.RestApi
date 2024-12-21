@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
 from pydantic import BaseModel
+from datetime import date, time
 
 
 class Incidente(SQLModel, table=True):

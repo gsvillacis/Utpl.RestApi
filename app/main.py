@@ -1,8 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
 from datetime import time
+
+from app.models import Incidente
+from sqlmodel import Session, select
+from app.db import init_db, get_session
 
 app = FastAPI()
 
@@ -14,6 +18,13 @@ class IncidenteU(BaseModel):
 
 # Lista vacía para almacenar los incidentes creados.
 Incidentes = []
+
+# Inicializa la base de datos al iniciar la aplicación.
+
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
 
 # Ruta para la página de inicio que devuelve un mensaje de bienvenida.
 
@@ -27,8 +38,9 @@ def bienvenida():
 
 
 @app.get("/Incidentes", response_model=List[Incidente])
-async def consultar_Incidentes():
-    return Incidentes
+async def consultar_Incidentes(session: Session = Depends(get_session)):
+    resultIncidentes = session.exec(select(Incidente)).all()
+    return resultIncidentes
 
 # Ruta para crear un nuevo Incidente.
 # El parámetro "response_model" especifica que la respuesta será un objeto "Incidente".
@@ -36,9 +48,12 @@ async def consultar_Incidentes():
 
 
 @app.post("/Incidentes", response_model=Incidente)
-async def crear_Incidente(incidente: Incidente):
+async def crear_Incidente(incidente: Incidente, session: Session = Depends(get_session)):
     incidente.id = len(Incidentes) + 1  # Asigna un ID único al incidente.
-    Incidentes.append(incidente)  # Agrega el incidente a la lista.
+    session.add(incidente)  # Agrega el incidente a la lista.
+    session.commit()
+    session.refresh(incidente)
+
     return incidente
 
 # Ruta para actualizar un Incidente existente por su ID.
