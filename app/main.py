@@ -1,8 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, Query
 from pydantic import BaseModel
 from typing import List, Optional
-from datetime import date
-from datetime import time
+from datetime import date, time
 
 from app.models import Incidente
 from sqlmodel import Session, select
