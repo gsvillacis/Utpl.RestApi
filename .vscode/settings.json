@@ -1,0 +1,28 @@
+{
+    "sqltools.connections": [
+        {
+            "name": "Local database",
+            "driver": "PostgreSQL",
+            "server": "localhost",
+            "port": 5432,
+            "database": "postgres",
+            "username": "postgres",
+            "password": "LocalPasswordOnly"
+        },
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "dpg-ctj1d5t2ng1s73bg1in0-a.oregon-postgres.render.com",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "render-bdincidentes",
+            "database": "dbincidentes_gcfp",
+            "username": "userincidentes"
+        }
+    ]
+}
