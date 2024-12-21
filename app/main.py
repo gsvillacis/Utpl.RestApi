@@ -74,12 +74,17 @@ async def actualizar_Incidente(incidente_id: int, incidenteU: IncidenteU):
 
 
 @app.delete("/Incidentes/{incidente_id}")
-async def eliminar_incidente(incidente_id: int):
+async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_session)):
     for idx, existing_incidente in enumerate(Incidentes):
         if existing_incidente.id == incidente_id:
             del Incidentes[idx]  # Elimina el incidente de la lista.
             return {"mensaje": "Incidente eliminado"}
     raise HTTPException(status_code=404, detail="Incidente no encontrado")
+
+session.delete(incidente)
+session.commit()
+
+return {"mensaje": "Incidente eliminado"}
 
 # Ruta para buscar incidentes por su descripción.
 
