@@ -16,13 +16,13 @@
                 }
             },
             "previewLimit": 50,
-            "server": "dpg-ctj1d5t2ng1s73bg1in0-a.oregon-postgres.render.com",
+            "server": "dpg-cueic1ogph6c73fbjou0-a.oregon-postgres.render.com",
             "port": 5432,
             "askForPassword": true,
             "driver": "PostgreSQL",
-            "name": "render-bdincidentes",
-            "database": "dbincidentes_gcfp",
-            "username": "userincidentes"
+            "name": "UTPL-IncidentesBP",
+            "database": "dbincidentesbp",
+            "username": "userincidentesbp"
         }
     ]
 }
