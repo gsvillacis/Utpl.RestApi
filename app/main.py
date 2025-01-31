@@ -63,7 +63,7 @@ async def crear_Incidente(incidente: IncidenteCreate, session: Session = Depends
 
 
 @app.put("/Incidentes/{incidente_id}")
-async def actualizar_incidente(incidente_id: int, incidenteU: IncidenteU, session: Session = Depends(get_session)):
+async def actualizar_incidente(incidente_id: int, incidenteU: IncidenteU, session: Session = Depends(get_session), verification=Depends(verification)):
     existing_incidente = session.get(Incidente, incidente_id)
     if not existing_incidente:
         raise HTTPException(status_code=404, detail="Incidente no encontrado")
@@ -73,7 +73,7 @@ async def actualizar_incidente(incidente_id: int, incidenteU: IncidenteU, sessio
 
 
 @app.delete("/Incidentes/{incidente_id}")
-async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_session)):
+async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_session), verification=Depends(verification)):
     incidente = session.get(Incidente, incidente_id)
     if not incidente:
         raise HTTPException(status_code=404, detail="Incidente no encontrado")
@@ -83,7 +83,7 @@ async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_s
 
 
 @app.get("/Incidentes/buscar", response_model=List[Incidente])
-async def buscar_Incidentes(id: int, session: Session = Depends(get_session)):
+async def buscar_Incidentes(id: int, session: Session = Depends(get_session), verification=Depends(verification)):
     statement = select(Incidente).where(Incidente.id == id)
     resultados = session.exec(statement).all()
     if not resultados:
