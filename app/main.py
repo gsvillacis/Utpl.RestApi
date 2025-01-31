@@ -80,7 +80,8 @@ async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_s
 
 
 @app.get("/Incidentes/buscar", response_model=List[Incidente])
-async def buscar_Incidentes(descripcion: str):
-    resultados = [incidente for incidente in Incidentes if descripcion.lower(
-    ) in incidente.Descripción_Error.lower()]
+async def buscar_Incidentes(descripcion: str, session: Session = Depends(get_session)):
+    statement = select(Incidente).where(
+        Incidente.Descripción_Error.ilike(f"%{descripcion}%"))
+    resultados = session.exec(statement).all()
     return resultados
