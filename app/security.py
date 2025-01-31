@@ -26,6 +26,7 @@ def verification(creds: HTTPBasicCredentials = Depends(security)):
     password = creds.password
 
     if username in users and password == users[username]["password"]:
+        print("Usuario autenticado")
         return True
     else:
         raise HTTPException(
