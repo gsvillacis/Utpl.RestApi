@@ -25,12 +25,11 @@ def verification(creds: HTTPBasicCredentials = Depends(security)):
     username = creds.username
     password = creds.password
 
-       if username in users and password == users[username]["password"]:
-            print('usuario autenticado')
-            return True
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Credenciales inválidas",
-                headers={"WWW-Authenticate": "Basic"},
-            )
+    if username in users and password == users[username]["password"]:
+        return True
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales inválidas",
+            headers={"WWW-Authenticate": "Basic"},
+        )
