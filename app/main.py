@@ -80,8 +80,9 @@ async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_s
 
 
 @app.get("/Incidentes/buscar", response_model=List[Incidente])
-async def buscar_Incidentes(descripcion: str, session: Session = Depends(get_session)):
-    statement = select(Incidente).where(
-        Incidente.Descripción_Error.ilike(f"%{descripcion}%"))
+async def buscar_Incidentes(id: int, session: Session = Depends(get_session)):
+    statement = select(Incidente).where(Incidente.id == id)
     resultados = session.exec(statement).all()
+    if not resultados:
+        raise HTTPException(status_code=404, detail="Incidente no encontrado")
     return resultados
