@@ -7,6 +7,9 @@ from app.models import Incidente
 from sqlmodel import Session, select
 from app.db import init_db, get_session
 
+from app.security import verification
+
+
 app = FastAPI()
 
 
@@ -37,7 +40,7 @@ def bienvenida():
 
 
 @app.get("/Incidentes", response_model=List[Incidente])
-async def consultar_Incidentes(session: Session = Depends(get_session)):
+async def consultar_Incidentes(session: Session = Depends(get_session)), Verification = Depends(verification):
     resultIncidentes = session.exec(select(Incidente)).all()
     return resultIncidentes
 
