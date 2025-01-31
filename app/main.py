@@ -16,7 +16,7 @@ class IncidenteCreate(BaseModel):
     Número_Contacto: str
     Descripción_Error: str
     Estado: str = "Nuevo"
-    Prioridad: str
+    Prioridad: "P4"
     Resolución: str
 
 
