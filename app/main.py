@@ -40,7 +40,7 @@ def bienvenida():
 
 
 @app.get("/Incidentes", response_model=List[Incidente])
-async def consultar_Incidentes(session: Session = Depends(get_session), verification: bool = Depends(verification)):
+async def consultar_Incidentes(session: Session = Depends(get_session), verification=Depends(verification)):
     resultIncidentes = session.exec(select(Incidente)).all()
     return resultIncidentes
 
