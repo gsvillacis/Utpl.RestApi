@@ -1,4 +1,4 @@
 fastapi==0.95.2
 uvicorn==0.22.0
-SQLAlchemy==2.0.12
+SQLAlchemy==1.4.22
 sqlmodel==0.0.4
