@@ -1,9 +1,9 @@
 import os
 from sqlmodel import create_engine, SQLModel, Session
 
-database_url = "postgresql://userincidentes:CW5LAfeBwyzq97xlH9F8ueaKaIsR5jg0@dpg-ctj1d5t2ng1s73bg1in0-a.oregon-postgres.render.com/dbincidentes_gcfp"
+database_url = "postgresql://userincidentesbp:BGBAnpvhxPMk3nM0HvfxBRaMT6Tk073i@dpg-cueic1ogph6c73fbjou0-a.oregon-postgres.render.com/dbincidentesbp"
 
-# Crear el motor de la base de datos
+# Conexión a la base de datos
 engine = create_engine(database_url, echo=True)
 
 # Función para inicializar la base de datos
