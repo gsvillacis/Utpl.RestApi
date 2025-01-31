@@ -46,15 +46,15 @@ async def consultar_Incidentes(session: Session = Depends(get_session), verifica
 
 
 @app.post("/Incidentes")
-async def crear_Incidente(incidente: IncidenteCreate, session: Session = Depends(get_session)):
+async def crear_Incidente(incidente: IncidenteCreate, session: Session = Depends(get_session)), verification = Depends(verification)):
     nuevo_incidente = Incidente(
-        Fecha_Ingreso=incidente.Fecha_Ingreso,
-        Registrado_Por=incidente.Registrado_Por,
-        Número_Contacto=incidente.Número_Contacto,
-        Descripción_Error=incidente.Descripción_Error,
-        Estado=incidente.Estado,
-        Prioridad=incidente.Prioridad,
-        Resolución=incidente.Resolución
+        Fecha_Ingreso = incidente.Fecha_Ingreso,
+        Registrado_Por = incidente.Registrado_Por,
+        Número_Contacto = incidente.Número_Contacto,
+        Descripción_Error = incidente.Descripción_Error,
+        Estado = incidente.Estado,
+        Prioridad = incidente.Prioridad,
+        Resolución = incidente.Resolución
     )
     session.add(nuevo_incidente)
     session.commit()
