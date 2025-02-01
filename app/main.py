@@ -67,14 +67,16 @@ async def crear_Incidente(incidente: IncidenteCreate, session: Session = Depends
     # Enviar mensaje a Telegram
 
     await send_message_telegram(
-        f"🚨 Nuevo incidente creado: \n\n"
-        f"Numero de ticket: {nuevo_incidente.id}\n"
-        f"Error: {nuevo_incidente.Descripción_Error}\n"
-        f"Estado: {nuevo_incidente.Estado}\n"
-        f"Prioridad: {nuevo_incidente.Prioridad}\n"
-        f"Fecha de ingreso: {nuevo_incidente.Fecha_Ingreso}\n"
-        f"Registrado por: {nuevo_incidente.Registrado_Por}\n"
-        f"Contacto: {nuevo_incidente.Número_Contacto}")
+        f"🚨 **Nuevo incidente creado:** \n\n"
+        f"**Numero de ticket:** {nuevo_incidente.id}\n"
+        f"**Error:** {nuevo_incidente.Descripción_Error}\n"
+        f"**Estado:** {nuevo_incidente.Estado}\n"
+        f"**Prioridad:** {nuevo_incidente.Prioridad}\n"
+        f"**Fecha de ingreso:** {nuevo_incidente.Fecha_Ingreso}\n"
+        f"**Registrado por:** {nuevo_incidente.Registrado_Por}\n"
+        f"**Contacto:** {nuevo_incidente.Número_Contacto}",
+        parse_mode="Markdown"
+    )
 
     return nuevo_incidente
 
@@ -96,6 +98,7 @@ async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_s
         raise HTTPException(status_code=404, detail="Incidente no encontrado")
     session.delete(incidente)
     session.commit()
+
     return {"mensaje": "Incidente eliminado"}
 
 
