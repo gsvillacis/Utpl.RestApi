@@ -1,9 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date, time
 
-from app.models import Incidente
+from app.models import GetUser, Incidente, PostUser
 from sqlmodel import Session, select
 from app.db import init_db, get_session
 
@@ -89,3 +89,25 @@ async def buscar_Incidentes(id: int, session: Session = Depends(get_session), ve
     if not resultados:
         raise HTTPException(status_code=404, detail="Incidente no encontrado")
     return resultados
+
+# registro de usuarios using email, username, password
+
+
+@app.post("/register", response_model=GetUser, tags=["usuarios"])
+def register_user(payload: PostUser, session: Session = Depends(get_session)):
+
+    if not payload.email:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please add Email",
+        )
+    user = get_user(session, payload.email)
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"User with email {payload.email} already exists",
+        )
+    user = create_user(session, payload)
+    print(user)
+
+    return user
