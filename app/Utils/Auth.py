@@ -1,5 +1,6 @@
 from pydantic import EmailStr
 from sqlalchemy.orm import session
+from app.Utils.passwords import secure_pwd
 from app.models import User, PostUser
 
 
