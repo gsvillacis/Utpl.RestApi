@@ -67,12 +67,19 @@ async def crear_Incidente(incidente: IncidenteCreate, session: Session = Depends
     # Enviar mensaje a Telegram
 
     await send_message_telegram(
-        f"Nuevo incidente creado: {nuevo_incidente.id} - {nuevo_incidente.Descripción_Error}")
+        f"🚨 Nuevo incidente creado: \n\n"
+        f"Numero de ticket: {nuevo_incidente.id}\n"
+        f"Error: {nuevo_incidente.Descripción_Error}\n"
+        f"Estado: {nuevo_incidente.Estado}\n"
+        f"Prioridad: {nuevo_incidente.Prioridad}\n"
+        f"Fecha de ingreso: {nuevo_incidente.Fecha_Ingreso}\n"
+        f"Registrado por: {nuevo_incidente.Registrado_Por}\n"
+        f"Contacto: {nuevo_incidente.Número_Contacto}")
 
     return nuevo_incidente
 
 
-@app.put("/Incidentes/{incidente_id}")
+@ app.put("/Incidentes/{incidente_id}")
 async def actualizar_incidente(incidente_id: int, incidenteU: IncidenteU, session: Session = Depends(get_session), verification=Depends(verification)):
     existing_incidente = session.get(Incidente, incidente_id)
     if not existing_incidente:
@@ -82,7 +89,7 @@ async def actualizar_incidente(incidente_id: int, incidenteU: IncidenteU, sessio
     return existing_incidente
 
 
-@app.delete("/Incidentes/{incidente_id}")
+@ app.delete("/Incidentes/{incidente_id}")
 async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_session), verification=Depends(verification)):
     incidente = session.get(Incidente, incidente_id)
     if not incidente:
@@ -92,7 +99,7 @@ async def eliminar_incidente(incidente_id: int, session: Session = Depends(get_s
     return {"mensaje": "Incidente eliminado"}
 
 
-@app.get("/Incidentes/buscar", response_model=List[Incidente])
+@ app.get("/Incidentes/buscar", response_model=List[Incidente])
 async def buscar_Incidentes(id: int, session: Session = Depends(get_session), verification=Depends(verification)):
     statement = select(Incidente).where(Incidente.id == id)
     resultados = session.exec(statement).all()
@@ -103,7 +110,7 @@ async def buscar_Incidentes(id: int, session: Session = Depends(get_session), ve
 # registro de usuarios using email, username, password
 
 
-@app.post("/register", response_model=GetUser, tags=["usuarios"])
+@ app.post("/register", response_model=GetUser, tags=["usuarios"])
 def register_user(payload: PostUser, session: Session = Depends(get_session)):
 
     if not payload.email:
