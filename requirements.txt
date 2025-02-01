@@ -6,5 +6,5 @@ python-dotenv==1.0.1
 psychopg2==2.9.10
 pydantic-settings==2.6.1
 python-multipart==0.0.20
-python_tegram_bot==21.10
+python_telegram_bot==21.10
 

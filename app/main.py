@@ -10,6 +10,9 @@ from app.db import init_db, get_session
 
 from app.security import verification
 
+# para trabajar con telegram
+
+from app.Utils.telegram_service import send_message_telegram
 
 app = FastAPI()
 
@@ -60,6 +63,12 @@ async def crear_Incidente(incidente: IncidenteCreate, session: Session = Depends
     session.add(nuevo_incidente)
     session.commit()
     session.refresh(nuevo_incidente)
+
+    # Enviar mensaje a Telegram
+
+    await send_message_telegram(
+        f"Nuevo incidente creado: {nuevo_incidente.id} - {nuevo_incidente.Descripción_Error}")
+
     return nuevo_incidente
 
 
