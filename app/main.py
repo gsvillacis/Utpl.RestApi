@@ -14,6 +14,10 @@ from app.security import verification
 
 from app.Utils.telegram_service import send_message_telegram
 
+# para trabajar con email
+
+from app.Utils.email_service import send_email
+
 app = FastAPI()
 
 
@@ -77,6 +81,14 @@ async def crear_Incidente(incidente: IncidenteCreate, session: Session = Depends
         f"**Contacto:** {nuevo_incidente.Número_Contacto}",
         parse_mode="Markdown"
     )
+    send_email("**Nuevo incidente creado:** \n\n"
+               f"**Numero de ticket:** {nuevo_incidente.id}\n"
+               f"**Error:** {nuevo_incidente.Descripción_Error}\n"
+               f"**Estado:** {nuevo_incidente.Estado}\n"
+               f"**Prioridad:** {nuevo_incidente.Prioridad}\n"
+               f"**Fecha de ingreso:** {nuevo_incidente.Fecha_Ingreso}\n"
+               f"**Registrado por:** {nuevo_incidente.Registrado_Por}\n"
+               f"**Contacto:** {nuevo_incidente.Número_Contacto}", ["gisse_0106@hotmail.com"])
 
     return nuevo_incidente
 
