@@ -1,8 +1,10 @@
-from sqlalchemy.orm import Session
+from pydantic import EmailStr
+from sqlalchemy.orm import session
+from app.models import User, PostUser
 
 
-def get_user(db: session, email: emailstr):
-    return db.query(user).filter(User.email == email).first()
+def get_user(db: session, email: EmailStr):
+    return db.query(User).filter(User.email == email).first()
 
 
 def create_user(db: session, user: PostUser):
