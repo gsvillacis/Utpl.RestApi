@@ -2,3 +2,9 @@ fastapi==0.95.2
 uvicorn==0.22.0
 SQLAlchemy==2.0.14
 sqlmodel==0.0.22
+python-dotenv==1.0.1
+psychopg2==2.9.10
+pydantic-settings==2.6.1
+python-multipart==0.0.20
+python_tegram_bot==21.10
+
