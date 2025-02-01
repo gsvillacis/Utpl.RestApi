@@ -1,6 +1,4 @@
 import telegram
-import asyncio
-
 from app.config import setting
 
 # Define bot
