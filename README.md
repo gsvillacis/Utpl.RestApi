@@ -17,7 +17,7 @@ Proyecto para trabajar con Api en REST utilizando fastapi
 
 ## Ejecucion
 
-**Ejecute el siguiente comando para inicar la aplicacion**
+## Ejecute el siguiente comando para inicar la aplicacion
 
   ```bash
   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
