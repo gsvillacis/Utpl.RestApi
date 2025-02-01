@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date, time
 
+from app.Utils.Auth import create_user, get_user
 from app.models import GetUser, Incidente, PostUser
 from sqlmodel import Session, select
 from app.db import init_db, get_session
